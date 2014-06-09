@@ -56,13 +56,24 @@
 			objectog.vertices.push(new THREE.Vector3(-0.5,-0.5,-0.5));//6
 			objectog.vertices.push(new THREE.Vector3(0.5,-0.5,-0.5)); //7
 			
+			// coordenadas de textura de referência
+			
+			var uv00 = new THREE.Vector2(0,0);
+			var uv10 = new THREE.Vector2(1,0);
+			var uv01 = new THREE.Vector2(0,1);
+			var uv11 = new THREE.Vector2(1,1);
+			
+			
 			face0_0 = new THREE.Face3(2,1,0);
 			face0_0.materialIndex=0;
 			objectog.faces.push(face0_0);
+			objectog.faceVertexUvs[0].push([uv01.clone(),uv10.clone(),uv00.clone()]);
+
 			
 			face0_1 = new THREE.Face3(1,2,3);
 			face0_1.materialIndex=0;
 			objectog.faces.push(face0_1);
+			objectog.faceVertexUvs[0].push([uv10.clone(),uv01.clone(),uv11.clone()]);
 			
 			//objectog.faces.push(new THREE.Face3(2,1,0));
 			//objectog.faces.push(new THREE.Face3(1,2,3));
@@ -122,16 +133,34 @@
 			//objectog.faces.push(new THREE.Face3(2,0,4));			
 			//objectog.faces.push(new THREE.Face3(2,4,6));
 			
+			
+			//molumen_small_funny_angry_monster.jpg
+			// textura
+		 //var mapUrl1 = "../images/dice-1-md-x.png";
+		 var mapUrl1 = "../images/molumen_small_funny_angry_monster.jpg";
+		 var map1 = THREE.ImageUtils.loadTexture(mapUrl1);
+		 	var mapUrl2 = "../images/dice-2-md-x.png";
+		 var map2 = THREE.ImageUtils.loadTexture(mapUrl2);
+		 	var mapUrl3 = "../images/dice-3-md-x.png";
+		 var map3 = THREE.ImageUtils.loadTexture(mapUrl3);
+		 	var mapUrl4 = "../images/dice-4-md-x.png";
+		 var map4 = THREE.ImageUtils.loadTexture(mapUrl4);
+		 	var mapUrl5 = "../images/dice-5-md-x.png";
+		 var map5 = THREE.ImageUtils.loadTexture(mapUrl5);
+		 	var mapUrl6 = "../images/dice-6-md-x.png";
+		 var map6 = THREE.ImageUtils.loadTexture(mapUrl6);
+
+		 
+			
 			facematerials = [
-			new THREE.MeshBasicMaterial({color:0xFFFFFF}),
-			new THREE.MeshBasicMaterial({color:0xFF0000}),
-			new THREE.MeshBasicMaterial({color:0x0000FF}),
-			new THREE.MeshBasicMaterial({color:0xFFFF00}),
-			new THREE.MeshBasicMaterial({color:0xFF00FF}),
-			new THREE.MeshBasicMaterial({color:0x00FFFF})
+			new THREE.MeshBasicMaterial({map:map1}),
+			new THREE.MeshBasicMaterial({map:map2}),
+			new THREE.MeshBasicMaterial({map:map3}),
+			new THREE.MeshBasicMaterial({map:map4}),
+			new THREE.MeshBasicMaterial({map:map5}),
+			new THREE.MeshBasicMaterial({map:map6})
 			]
         
-   testeg = new THREE.BoxGeometry(1,1,1);
    
    var faceMaterial = new THREE.MeshFaceMaterial(facematerials);   	
 
