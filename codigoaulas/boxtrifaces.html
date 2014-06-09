@@ -1,0 +1,194 @@
+<html>
+	<head>
+		<style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+		<script src="../threejs/three.min.js"></script>
+		<script src="../libs/dat.gui.min.js"></script>
+	</head>
+	<body>
+		<script>
+			// uma cena
+			var myscene = new THREE.Scene();
+			
+			// uma câmara
+			// new THREE.PerspectiveCamera( fov, largura / altura, near, far )
+			var mycamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+			mycamera.position.set(10,10,10);
+			mycamera.lookAt(new THREE.Vector3( -1, -1, -1 ));
+			myscene.add( mycamera );
+			
+			
+			// um renderer
+			var myrenderer = new THREE.WebGLRenderer();
+			myrenderer.setSize(window.innerWidth,window.innerHeight);
+			myrenderer.setClearColor(0xAAAAAA, 1);
+			
+			// sombras
+   // myrenderer.shadowMapEnabled = true;
+   // myrenderer.shadowMapSoft = true;
+			
+			// colocar o canvas / resultado do renderer na página
+			var mycanvas = myrenderer.domElement;
+			document.body.appendChild(mycanvas);
+			
+			
+			// criar uns eixos
+			myaxis = new THREE.AxisHelper(20);
+			myscene.add(myaxis);
+			
+			
+			// geometria
+			
+			objectog = new THREE.Geometry();
+			
+			objectog.vertices.push(new THREE.Vector3(-0.5,0.5,0.5));	  //0
+			objectog.vertices.push(new THREE.Vector3(0.5,0.5,0.5));   //1
+			objectog.vertices.push(new THREE.Vector3(-0.5,-0.5,0.5)); //2
+			objectog.vertices.push(new THREE.Vector3(0.5,-0.5,0.5));  //3
+			
+			objectog.vertices.push(new THREE.Vector3(-0.5,0.5,-0.5));	 //4
+			objectog.vertices.push(new THREE.Vector3(0.5,0.5,-0.5));  //5
+			objectog.vertices.push(new THREE.Vector3(-0.5,-0.5,-0.5));//6
+			objectog.vertices.push(new THREE.Vector3(0.5,-0.5,-0.5)); //7
+			
+			face0_0 = new THREE.Face3(2,1,0);
+			face0_0.materialIndex=0;
+			objectog.faces.push(face0_0);
+			
+			face0_1 = new THREE.Face3(1,2,3);
+			face0_1.materialIndex=0;
+			objectog.faces.push(face0_1);
+			
+			//objectog.faces.push(new THREE.Face3(2,1,0));
+			//objectog.faces.push(new THREE.Face3(1,2,3));
+			
+			face1_0 = new THREE.Face3(4,5,6);
+			face1_0.materialIndex=1;
+			objectog.faces.push(face1_0);
+			
+			face1_1 = new THREE.Face3(5,7,6);
+			face1_1.materialIndex=1;
+			objectog.faces.push(face1_1);
+			
+			//objectog.faces.push(new THREE.Face3(4,5,6));
+			//objectog.faces.push(new THREE.Face3(5,7,6));
+			
+			face2_0 = new THREE.Face3(0,1,4);
+			face2_0.materialIndex=2;
+			objectog.faces.push(face2_0);
+			
+			face2_1 = new THREE.Face3(1,5,4);
+			face2_1.materialIndex=2;
+			objectog.faces.push(face2_1);
+			
+			//objectog.faces.push(new THREE.Face3(0,1,4));			
+			//objectog.faces.push(new THREE.Face3(1,5,4));
+			
+			face3_0 = new THREE.Face3(3,2,6);
+			face3_0.materialIndex=3;
+			objectog.faces.push(face3_0);
+			
+			face3_1 = new THREE.Face3(3,6,7);
+			face3_1.materialIndex=3;
+			objectog.faces.push(face3_1);	
+			
+			//objectog.faces.push(new THREE.Face3(3,2,6));			
+			//objectog.faces.push(new THREE.Face3(3,6,7));
+			
+			face4_0 = new THREE.Face3(3,7,5);
+			face4_0.materialIndex=4;
+			objectog.faces.push(face4_0);
+			
+			face4_1 = new THREE.Face3(3,5,1);
+			face4_1.materialIndex=4;
+			objectog.faces.push(face4_1);	
+			
+			//objectog.faces.push(new THREE.Face3(3,7,5));			
+			//objectog.faces.push(new THREE.Face3(3,5,1));
+			
+			face5_0 = new THREE.Face3(2,0,4);
+			face5_0.materialIndex=5;
+			objectog.faces.push(face5_0);
+			
+			face5_1 = new THREE.Face3(2,4,6);
+			face5_1.materialIndex=5;
+			objectog.faces.push(face5_1);
+				
+			//objectog.faces.push(new THREE.Face3(2,0,4));			
+			//objectog.faces.push(new THREE.Face3(2,4,6));
+			
+			facematerials = [
+			new THREE.MeshBasicMaterial({color:0xFFFFFF}),
+			new THREE.MeshBasicMaterial({color:0xFF0000}),
+			new THREE.MeshBasicMaterial({color:0x0000FF}),
+			new THREE.MeshBasicMaterial({color:0xFFFF00}),
+			new THREE.MeshBasicMaterial({color:0xFF00FF}),
+			new THREE.MeshBasicMaterial({color:0x00FFFF})
+			]
+        
+   testeg = new THREE.BoxGeometry(1,1,1);
+   
+   var faceMaterial = new THREE.MeshFaceMaterial(facematerials);   	
+
+			//objecto = new THREE.Mesh(testeg,faceMaterial);
+			objecto = new THREE.Mesh(objectog,faceMaterial);
+			
+			myscene.add(objecto);
+			
+			var objecto2g = new THREE.CircleGeometry(5,16);
+			var objecto2 = new THREE.Mesh(objecto2g,faceMaterial);
+			objecto2.position.set(3,3,3);
+			//myscene.add(objecto2);
+
+			
+			// add spotlight for the shadows
+        		var spotLight = new THREE.SpotLight(0xFFFFFF,1);
+        		spotLight.position.set(0, 20, 0);
+        		spotLight.castShadow = true;
+        		spotLight.shadowDarkness = 0.9;
+       		 spotLight.shadowCameraVisible = true;
+        
+        		spotLight.shadowCameraNear = 1;         // seems to be important
+			      spotLight.shadowCameraFar = 100;
+			      spotLight.shadowCameraFov = 25;
+		       	spotLight.shadowBias = -0.00022;          // adjust bias to remove artifacts (can be tricky, so I've heard)
+		       spotLight.shadowMapWidth = 512;
+			      spotLight.shadowMapHeight = 512;
+        		myscene.add(spotLight);
+
+			var ambientLight = new THREE.AmbientLight(0xaaaaaa);
+   myscene.add(ambientLight);
+			// objecto	
+			var rotControls = {
+				rotx:0.0,
+				roty:0.0,
+				rotz:0.0
+			}
+			
+			// fazer o render
+			//debugger;
+			
+			var guirc = new dat.GUI();
+			
+			guirc.add(rotControls,'rotx',-.25,.25).step(0.05);
+			guirc.add(rotControls,'roty',-.25,.25).step(0.05);
+			guirc.add(rotControls,'rotz',-.25,.25).step(0.05);
+			
+			function doRender() {
+				requestAnimationFrame(doRender);
+				objecto.rotation.x += rotControls.rotx;
+				objecto.rotation.y += rotControls.roty;
+				objecto.rotation.z += rotControls.rotz;
+				myrenderer.render(myscene,mycamera);
+			}
+
+			
+			doRender();
+		</script>
+	</body>
+</html>
