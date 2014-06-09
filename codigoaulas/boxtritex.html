@@ -57,6 +57,7 @@
 			objectog.vertices.push(new THREE.Vector3(0.5,-0.5,-0.5)); //7
 			
 			// coordenadas de textura de referência
+			// origem das coordenadas uv no canto inf esq
 			
 			var uv00 = new THREE.Vector2(0,0);
 			var uv10 = new THREE.Vector2(1,0);
@@ -67,13 +68,13 @@
 			face0_0 = new THREE.Face3(2,1,0);
 			face0_0.materialIndex=0;
 			objectog.faces.push(face0_0);
-			objectog.faceVertexUvs[0].push([uv01.clone(),uv10.clone(),uv00.clone()]);
+			objectog.faceVertexUvs[0].push([uv00.clone(),uv11.clone(),uv01.clone()]);
 
 			
 			face0_1 = new THREE.Face3(1,2,3);
 			face0_1.materialIndex=0;
 			objectog.faces.push(face0_1);
-			objectog.faceVertexUvs[0].push([uv10.clone(),uv01.clone(),uv11.clone()]);
+			objectog.faceVertexUvs[0].push([uv11.clone(),uv00.clone(),uv10.clone()]);
 			
 			//objectog.faces.push(new THREE.Face3(2,1,0));
 			//objectog.faces.push(new THREE.Face3(1,2,3));
@@ -81,10 +82,13 @@
 			face1_0 = new THREE.Face3(4,5,6);
 			face1_0.materialIndex=1;
 			objectog.faces.push(face1_0);
+			objectog.faceVertexUvs[0].push([uv00.clone(),uv10.clone(),uv01.clone()]);
+
 			
 			face1_1 = new THREE.Face3(5,7,6);
 			face1_1.materialIndex=1;
 			objectog.faces.push(face1_1);
+			objectog.faceVertexUvs[0].push([uv10.clone(),uv11.clone(),uv01.clone()]);
 			
 			//objectog.faces.push(new THREE.Face3(4,5,6));
 			//objectog.faces.push(new THREE.Face3(5,7,6));
@@ -92,21 +96,28 @@
 			face2_0 = new THREE.Face3(0,1,4);
 			face2_0.materialIndex=2;
 			objectog.faces.push(face2_0);
+			objectog.faceVertexUvs[0].push([uv00.clone(),uv10.clone(),uv01.clone()]);
+
 			
 			face2_1 = new THREE.Face3(1,5,4);
 			face2_1.materialIndex=2;
 			objectog.faces.push(face2_1);
-			
+			objectog.faceVertexUvs[0].push([uv10.clone(),uv11.clone(),uv01.clone()]);
+
 			//objectog.faces.push(new THREE.Face3(0,1,4));			
 			//objectog.faces.push(new THREE.Face3(1,5,4));
 			
 			face3_0 = new THREE.Face3(3,2,6);
 			face3_0.materialIndex=3;
 			objectog.faces.push(face3_0);
+			objectog.faceVertexUvs[0].push([uv11.clone(),uv01.clone(),uv00.clone()]);
+
 			
 			face3_1 = new THREE.Face3(3,6,7);
 			face3_1.materialIndex=3;
 			objectog.faces.push(face3_1);	
+			objectog.faceVertexUvs[0].push([uv11.clone(),uv00.clone(),uv10.clone()]);
+
 			
 			//objectog.faces.push(new THREE.Face3(3,2,6));			
 			//objectog.faces.push(new THREE.Face3(3,6,7));
@@ -114,10 +125,14 @@
 			face4_0 = new THREE.Face3(3,7,5);
 			face4_0.materialIndex=4;
 			objectog.faces.push(face4_0);
+		 objectog.faceVertexUvs[0].push([uv00.clone(),uv10.clone(),uv11.clone()]);
+
 			
 			face4_1 = new THREE.Face3(3,5,1);
 			face4_1.materialIndex=4;
 			objectog.faces.push(face4_1);	
+			objectog.faceVertexUvs[0].push([uv00.clone(),uv11.clone(),uv01.clone()]);
+
 			
 			//objectog.faces.push(new THREE.Face3(3,7,5));			
 			//objectog.faces.push(new THREE.Face3(3,5,1));
@@ -125,11 +140,14 @@
 			face5_0 = new THREE.Face3(2,0,4);
 			face5_0.materialIndex=5;
 			objectog.faces.push(face5_0);
+			objectog.faceVertexUvs[0].push([uv10.clone(),uv11.clone(),uv01.clone()]);
+
 			
 			face5_1 = new THREE.Face3(2,4,6);
 			face5_1.materialIndex=5;
 			objectog.faces.push(face5_1);
-				
+			objectog.faceVertexUvs[0].push([uv10.clone(),uv01.clone(),uv00.clone()]);
+
 			//objectog.faces.push(new THREE.Face3(2,0,4));			
 			//objectog.faces.push(new THREE.Face3(2,4,6));
 			
@@ -154,11 +172,11 @@
 			
 			facematerials = [
 			new THREE.MeshBasicMaterial({map:map1}),
-			new THREE.MeshBasicMaterial({map:map2}),
-			new THREE.MeshBasicMaterial({map:map3}),
-			new THREE.MeshBasicMaterial({map:map4}),
-			new THREE.MeshBasicMaterial({map:map5}),
-			new THREE.MeshBasicMaterial({map:map6})
+			new THREE.MeshBasicMaterial({map:map1}),
+			new THREE.MeshBasicMaterial({map:map1}),
+			new THREE.MeshBasicMaterial({map:map1}),
+			new THREE.MeshBasicMaterial({map:map1}),
+			new THREE.MeshBasicMaterial({map:map1})
 			]
         
    
@@ -194,7 +212,6 @@
 				myrenderer.render(myscene,mycamera);
 			}
 
-			
 			doRender();
 		</script>
 	</body>
