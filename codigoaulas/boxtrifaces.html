@@ -18,7 +18,7 @@
 			// uma câmara
 			// new THREE.PerspectiveCamera( fov, largura / altura, near, far )
 			var mycamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
-			mycamera.position.set(10,10,10);
+			mycamera.position.set(3,3,3);
 			mycamera.lookAt(new THREE.Vector3( -1, -1, -1 ));
 			myscene.add( mycamera );
 			
@@ -140,29 +140,7 @@
 			
 			myscene.add(objecto);
 			
-			var objecto2g = new THREE.CircleGeometry(5,16);
-			var objecto2 = new THREE.Mesh(objecto2g,faceMaterial);
-			objecto2.position.set(3,3,3);
-			//myscene.add(objecto2);
-
 			
-			// add spotlight for the shadows
-        		var spotLight = new THREE.SpotLight(0xFFFFFF,1);
-        		spotLight.position.set(0, 20, 0);
-        		spotLight.castShadow = true;
-        		spotLight.shadowDarkness = 0.9;
-       		 spotLight.shadowCameraVisible = true;
-        
-        		spotLight.shadowCameraNear = 1;         // seems to be important
-			      spotLight.shadowCameraFar = 100;
-			      spotLight.shadowCameraFov = 25;
-		       	spotLight.shadowBias = -0.00022;          // adjust bias to remove artifacts (can be tricky, so I've heard)
-		       spotLight.shadowMapWidth = 512;
-			      spotLight.shadowMapHeight = 512;
-        		myscene.add(spotLight);
-
-			var ambientLight = new THREE.AmbientLight(0xaaaaaa);
-   myscene.add(ambientLight);
 			// objecto	
 			var rotControls = {
 				rotx:0.0,
