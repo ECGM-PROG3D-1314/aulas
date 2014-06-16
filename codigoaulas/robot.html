@@ -17,31 +17,64 @@
 	<body id="container">
 <script>
 	////////////////////////////////////////////////////////////////////////////////
-	// simple robot arm: cylinders and spheres
+	// 
 	////////////////////////////////////////////////////////////////////////////////
 
 	/*global THREE, Coordinates, $, document, window, dat*/
 
-	var
-	camera, scene, renderer;
+	var camera, scene, renderer;
+	
 	var cameraControls, effectController;
+	
 	var clock = new THREE.Clock();
+	
+	
 	var gridX = true;
 	var gridY = false;
 	var gridZ = false;
 	var axes = true;
 	var ground = true;
-	var base, arm, forearm, hand;
+	var fog = true;
 	
-	var extensionLenght = 100;
-	var jointRadius = 26;
-	var extensionRadius = 10;
-	var baseRadius = 25;
+	
+	var robot, robotBase, robotArm;
+	
+	var baseRadius = 50;
 	var baseHeight = 100;
+	var jointRadius = 25;
+	var extensionRadius = 10;
+	var extensionLenght = 100;
+	
+	// Materials
+		var robotBaseMaterial = new THREE.MeshPhongMaterial({
+			color : 0x666688,							// dark blue
+			specular : 0xDDDDFF,				// almost grey
+			shininess : 20
+		});
+		
+	 var robotJointMaterial = new THREE.MeshPhongMaterial({
+			color : 0x888888,
+			specular : 0xDDDDDD,
+			shininess : 100
+		});
+		
+		var robotExtensionMaterial = new THREE.MeshPhongMaterial({
+			color : 0xAAAA88,
+			specular : 0xEEEEAA,
+			shininess : 80
+		});
+		
+		var robotDefaultMaterial = new THREE.MeshPhongMaterial({
+			color : 0xFFDDDD,
+			specular : 0xFFDDDD,
+			shininess : 50
+		});
+
+	
+	var theFog = new THREE.Fog(0x808080, 2000, 4000);
 
 	function fillScene() {
 		scene = new THREE.Scene();
-		scene.fog = new THREE.Fog(0x808080, 2000, 4000);
 
 		// LIGHTS
 		var ambientLight = new THREE.AmbientLight(0x222222);
@@ -55,8 +88,11 @@
 		scene.add(ambientLight);
 		scene.add(light);
 		scene.add(light2);
-
-// additional / auxialiary elements
+		
+		//alert(fog);
+		if (fog) {
+			scene.fog = theFog;
+		}
 		if (ground) {
 			Coordinates.drawGround({
 				size : 10000
@@ -89,132 +125,29 @@
 				axisTess : 50
 			});
 		}
-
-// Materials
-		var robotJointMaterial = new THREE.MeshPhongMaterial({
-			color : 0x222288,
-			specular : 0x6666AA,
-			shininess : 20
-		});
 		
-		var robotExtensionMaterial = new THREE.MeshPhongMaterial({
-			color : 0x888888,
-			specular : 0xDDDDDD,
-			shininess : 100
-		});
-		
-		var robotDefaultMaterial = new THREE.MeshPhongMaterial({
-			color : 0xDDDDDD,
-			specular : 0xDDDDFF,
-			shininess : 100
-		});
+		// robot
+  robot = new THREE.Object3D();
+  scene.add(robot);
+  // base
+  robotBase = new THREE.Object3D();
+  robot.add(robotBase);
+  
+  robotBaseM = new THREE.Mesh(new THREE.CylinderGeometry(baseRadius,baseRadius,baseHeight,32,32),robotBaseMaterial);
+  robotBaseM.position.y = baseHeight / 2;
+  robotBase.add(robotBaseM);
+  
+  robotArm = new THREE.Object3D();
+  robotBase.add(robotArm);
+  robotArm.position.y = jointRadius + baseHeight;
+  
+  robotArmJoint = new THREE.Mesh(new THREE.SphereGeometry(jointRadius,32,32),robotJointMaterial);
+  robotArmExtension = new THREE.Mesh(new THREE.CylinderGeometry(extensionRadius,extensionRadius,extensionLenght,32,32),robotExtensionMaterial);
+		robotArmExtension.position.y = jointRadius + extensionLenght / 2;
+		robotArm.add(robotArmJoint);
+		robotArm.add(robotArmExtension);
 
-	 // robot
-
-		robot = new THREE.Object3D();
-		scene.add(robot);
-		
-		// base
-		
-	 base = new THREE.Object3D();
-	 
-		var basem = new THREE.Mesh(new THREE.CylinderGeometry(baseRadius, baseRadius, baseHeight,32, 32), robotDefaultMaterial);
-		basem.position.y = baseHeight /2;
-		base.add(basem);
-		robot.add(base);
-		
-  // arm
-
-		arm 									 = new THREE.Object3D();
-		armJoint						= new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), robotJointMaterial);
-  armExtension 	= new THREE.Mesh(new THREE.CylinderGeometry(extensionRadius, extensionRadius, extensionLenght ,32, 32), robotExtensionMaterial);
-	 
-	 armExtension.position.y =  jointRadius + extensionLenght / 2;	 
-	 arm.add(armJoint);
-	 arm.add(armExtension);
-	 
-	 arm.position.y = baseHeight+jointRadius;
-  //arm.rotation.x = 0.0;
-  base.add(arm);
-
-   
-   
-		forearm = new THREE.Object3D();
-		forearmJoint      = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), robotJointMaterial);
-  forearmExtension  = new THREE.Mesh(new THREE.CylinderGeometry(10, 10, 100 ,32, 32), robotExtensionMaterial);
-	 forearmExtension.position.y = jointRadius + extensionLenght / 2;
-	 forearm.add(forearmJoint);
-	 forearm.add(forearmExtension);
-	 arm.add(forearm);
-		forearm.position.y = jointRadius + extensionLenght;
-		//arm.position.y = 0;
-  forearm.rotation.x = 0.0;
-		
-		
-		hand = new THREE.Object3D();
-		handJoint      = new THREE.Mesh(new THREE.SphereGeometry(jointRadius, 32, 32), robotJointMaterial);
-  handExtension  = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20 ,32, 32), robotExtensionMaterial);
-	 handGraspL					 = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 20 ,32, 32), robotDefaultMaterial);
-	 handGraspR				 = new THREE.Mesh(new THREE.CylinderGeometry(2, 2, 20 ,32, 32), robotDefaultMaterial);
-
-	 handExtension.position.y = 20 + jointRadius/2;
-	 handGraspR.position.y = 20 + jointRadius/2 + 20;
-	 	handGraspL.position.y = 20 + jointRadius/2 + 20;
-
-	 handGraspR.position.x = 20 /2;
-	 handGraspL.position.x = -20 /2;
-	 
-	 hand.add(handJoint);
-	 hand.add(handExtension);
-	 hand.add(handGraspL);
-	 hand.add(handGraspR);
-	 forearm.add(hand);
-	 
-		hand.position.y = jointRadius+100;
-		
-		//arm.position.y = 0;
-  hand.rotation.x = 0.0;
-		
-		
-		
-		//createRobotCrane(arm, uaLength, robotUpperArmMaterial);
-
-		// Move the forearm itself to the end of the upper arm.
-		//forearm.position.y = uaLength;
-		arm.add(forearm);
-
-		//scene.add(arm);
-	}
-
-	function createRobotExtender(part, length, material) {
-		var cylinder = new THREE.Mesh(new THREE.CylinderGeometry(22, 22, 6, 32), material);
-		part.add(cylinder);
-
-		var i;
-		for ( i = 0; i < 4; i++) {
-			var box = new THREE.Mesh(new THREE.BoxGeometry(4, length, 4), material);
-			box.position.x = (i < 2) ? -8 : 8;
-			box.position.y = length / 2;
-			box.position.z = (i % 2) ? -8 : 8;
-			part.add(box);
-		}
-
-		cylinder = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 40, 32), material);
-		cylinder.rotation.x = 90 * Math.PI / 180;
-		cylinder.position.y = length;
-		part.add(cylinder);
-	}
-
-	function createRobotCrane(part, length, material) {
-		var box = new THREE.Mesh(new THREE.BoxGeometry(18, length, 18), material);
-		box.position.y = length / 2;
-		part.add(box);
-
-		var sphere = new THREE.Mesh(new THREE.SphereGeometry(20, 32, 16), material);
-		// place sphere at end of arm
-		sphere.position.y = length;
-		part.add(sphere);
-	}
+  }
 
 	function init() {
 		var canvasWidth = window.innerWidth;
@@ -253,68 +186,56 @@
 		var delta = clock.getDelta();
 		cameraControls.update(delta);
 
-		if (effectController.newGridX !== gridX || effectController.newGridY !== gridY || effectController.newGridZ !== gridZ || effectController.newGround !== ground || effectController.newAxes !== axes) {
+		if (effectController.newGridX !== gridX || 
+			   effectController.newGridY !== gridY || 
+			   effectController.newGridZ !== gridZ || 
+			   effectController.newGround !== ground || 
+			   effectController.newAxes !== axes ||
+			   effectController.newFog != fog) {
 			gridX = effectController.newGridX;
 			gridY = effectController.newGridY;
 			gridZ = effectController.newGridZ;
 			ground = effectController.newGround;
 			axes = effectController.newAxes;
+			fog = effectController.newFog;
 
 			fillScene();
 		}
-
-	 base.rotation.y = effectController.by * Math.PI / 180;
-		arm.rotation.y = effectController.uy * Math.PI / 180;
-		// yaw
-		arm.rotation.z = effectController.uz * Math.PI / 180;
-		// roll
-
-		forearm.rotation.y = effectController.fy * Math.PI / 180;
-		// yaw
-		forearm.rotation.z = effectController.fz * Math.PI / 180;
-		// roll
-
+  //console.log(robotWaist);
+  
+		//robotBase.rotation.y = effectController.by * Math.PI / 180;
+		robotBase.rotation.y = effectController.by * Math.PI / 180;
+		robotArm.rotation.x = effectController.ax * Math.PI / 180;
+		
 		renderer.render(scene, camera);
 	}
 
 	function setupGui() {
 
 		effectController = {
-
+			newFog : fog,
 			newGridX : gridX,
 			newGridY : gridY,
 			newGridZ : gridZ,
 			newGround : ground,
 			newAxes : axes,
 			
-			by : 0.0, // base rotation y
-
-			uy : 0.0,
-			uz : 0.0,
-
-			fy : 0.0,
-			fz : 0.0
-
-			// uy : 70.0,
-			// uz : -15.0,
-
-			// fy : 10.0,
-			// fz : 60.0
+			by : 0.0,
+			ax : 0.0
 		};
 
 		var gui = new dat.GUI();
-		var h = gui.addFolder("Grid display");
+		var h = gui.addFolder("Scene display");
+		h.add(effectController, "newFog").name("add Fog");
+		h = gui.addFolder("Grid display");
 		h.add(effectController, "newGridX").name("Show XZ grid");
 		h.add(effectController, "newGridY").name("Show YZ grid");
 		h.add(effectController, "newGridZ").name("Show XY grid");
 		h.add(effectController, "newGround").name("Show ground");
 		h.add(effectController, "newAxes").name("Show axes");
-		h = gui.addFolder("Arm angles");
-		h.add(effectController, "by", -180.0, 180.0, 0.025).name("base rotation y");
-		h.add(effectController, "uy", -180.0, 180.0, 0.025).name("Upper arm y");
-		h.add(effectController, "uz", -45.0, 45.0, 0.025).name("Upper arm z");
-		h.add(effectController, "fy", -180.0, 180.0, 0.025).name("Forearm y");
-		h.add(effectController, "fz", -180.0, 180.0, 0.025).name("Forearm z");
+		h = gui.addFolder("Robot angles");
+		h.add(effectController, "by", -180.0, 180.0, 0.025).name("base");
+		h.add(effectController, "ax", 0, 120.0, 0.025).name("arm");
 	}
 
 	function takeScreenshot() {
