@@ -10,7 +10,8 @@
 		<script src="../jquery/jquery-2.1.1.min.js"></script>
 		<script src="../threejs/three.min.js"></script>
 		<script src="../libs/dat.gui.min.js"></script>
-		<script src="../libs/OrbitAndPanControls.new.js"></script>
+		<!--script src="../libs/OrbitAndPanControls.new.js"></script-->
+		<script src="../libs/OrbitControls.js"></script>
 		<script src="../libs/Coordinates.js"></script>
 		
 	</head>
@@ -170,7 +171,7 @@
 		camera = new THREE.PerspectiveCamera(30, canvasRatio, 1, 10000);
 		camera.position.set(-510, 240, 100);
 		// CONTROLS
-		cameraControls = new THREE.OrbitAndPanControls(camera, renderer.domElement);
+		cameraControls = new THREE.OrbitControls(camera, renderer.domElement);
 		cameraControls.target.set(0, 100, 0);
 
 		fillScene();
