@@ -1,0 +1,130 @@
+<html>
+	<head>
+		<style>
+        body {
+            /* set margin to 0 and overflow to hidden, to go fullscreen */
+            margin: 0;
+            overflow: hidden;
+        }
+    </style>
+		<script src="../threejs/three.min.js"></script>
+		<script src="../libs/dat.gui.min.js"></script>
+		<script>
+			//alert("ola - no inicio");
+		</script>
+	</head>
+	<body>
+		<script>
+			// alert("ola - no fim");
+			// uma cena
+			var myscene = new THREE.Scene();
+			
+			// uma câmara
+			// new THREE.PerspectiveCamera( fov, largura / altura, near, far )
+			var mycamera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 1, 1000 );
+			mycamera.position.set(10,10,10);
+			mycamera.lookAt(new THREE.Vector3( -1, -1, -1 ));
+			myscene.add( mycamera );
+			
+			
+			// um renderer
+			var myrenderer = new THREE.WebGLRenderer();
+			myrenderer.setSize(window.innerWidth,window.innerHeight);
+			myrenderer.setClearColor(0xAAAAAA, 1);
+			
+			// sombras
+   myrenderer.shadowMapEnabled = true;
+   myrenderer.shadowMapSoft = true;
+			
+			// colocar o canvas / resultado do renderer na página
+			var mycanvas = myrenderer.domElement;
+			document.body.appendChild(mycanvas);
+			
+			
+			// criar uns eixos
+			myaxis = new THREE.AxisHelper(20);
+			myscene.add(myaxis);
+			
+			
+			// criar uma mesh para o plano
+			var myplaneg = new THREE.PlaneGeometry(20,20,10,10);
+			var myplaneMaterial = new THREE.MeshLambertMaterial({color: 0xFFFFFF});
+			var myplane = new THREE.Mesh(myplaneg, myplaneMaterial);
+
+			// posição e tranformações
+			myplane.rotation.x = -Math.PI / 2;
+			myplane.position.y = -2;
+			
+			// sombras
+			myplane.receiveShadow = true;
+   myplane.castShadow = false;
+       		
+			myscene.add(myplane);
+			// criar uma mesh
+			
+			var mycube = new THREE.BoxGeometry(2,2,2);
+			
+			var mycubemat = new THREE.MeshBasicMaterial({color: 0xFFFF00});
+			var mycubematp = new THREE.MeshPhongMaterial(
+				{color: 0xFFFF00,
+				 ambient : 0xFFFF00,
+				 specular : 0xFFFFFF,
+				 shininess: 2});
+
+			var mycubematw = new THREE.MeshBasicMaterial({color: 0xFFFFFF, wireframe:true, wireframeLinewidth:2});
+			
+			// multi marerial does not cast shadows
+		 // var mymeshmulti = THREE.SceneUtils.createMultiMaterialObject(mycube,[mycubemat,mycubematw]);
+			var mymeshmulti = new THREE.Mesh(mycube,mycubematp);
+			// sombras
+			mymeshmulti.castShadow = true;
+			mymeshmulti.receiveShadow = false;
+					
+			myscene.add(mymeshmulti);
+			
+			// add spotlight for the shadows
+        		var spotLight = new THREE.SpotLight(0xFFFFFF,1);
+        		spotLight.position.set(0, 20, 0);
+        		spotLight.castShadow = true;
+        		spotLight.shadowDarkness = 0.9;
+       		 spotLight.shadowCameraVisible = true;
+        
+        		spotLight.shadowCameraNear = 1;         // seems to be important
+			      spotLight.shadowCameraFar = 100;
+			      spotLight.shadowCameraFov = 25;
+		       	spotLight.shadowBias = -0.00022;          // adjust bias to remove artifacts (can be tricky, so I've heard)
+		       spotLight.shadowMapWidth = 512;
+			      spotLight.shadowMapHeight = 512;
+        		myscene.add(spotLight);
+
+			var ambientLight = new THREE.AmbientLight(0xaaaaaa);
+   myscene.add(ambientLight);
+			// objecto	
+			var rotControls = {
+				rotx:0.01,
+				roty:0.0,
+				rotz:0.0
+			}
+			
+			// fazer o render
+			//debugger;
+			
+			var guirc = new dat.GUI();
+			
+			guirc.add(rotControls,'rotx',-.25,.25).step(0.05);
+			guirc.add(rotControls,'roty',-.25,.25).step(0.05);
+			guirc.add(rotControls,'rotz',-.25,.25).step(0.05);
+			
+			function doRender() {
+				requestAnimationFrame(doRender);
+				mymeshmulti.rotation.x += rotControls.rotx;
+				mymeshmulti.rotation.y += rotControls.roty;
+				mymeshmulti.rotation.z += rotControls.rotz;
+				myrenderer.render(myscene,mycamera);
+			}
+
+			
+			doRender();
+		</script>
+	</body>
+</html>
